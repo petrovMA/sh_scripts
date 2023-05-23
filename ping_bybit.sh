@@ -8,7 +8,7 @@ ITERATIONS=5
 # Loop through the specified number of iterations
 for ((i=1; i<=$ITERATIONS; i++))
 do
-  echo "Making request $i..."
+  echo "Making request $1"
 
   # Make the curl request and save the response
   response=$(curl -s -w %{time_total}\\n -o /dev/null $1)
@@ -16,7 +16,7 @@ do
   # Append the response to the file
   echo "$response" >> "$RESPONSE_FILE"
 
-  echo "Response $i recorded."
+  echo "Response time $i recorded."
 done
 }
 
@@ -35,7 +35,7 @@ requests "https://api.bybit.com/v5/market/instruments-info?category=spot"
 requests "https://api.bybit.com/v5/market/tickers?category=spot"
 requests "https://api.bybit.com/v5/market/funding/history?category=spot"
 
-echo "Script execution completed."
+echo "Requests test completed."
 
 
 # Specify the file containing the numbers
@@ -53,19 +53,13 @@ do
     count=$((count + 1))
     # Replace dot with decimal point
     number=${number//./,}
-    echo "The number = $number"
 
     # Add the number to the sum
     sum=$((sum + number))
-    echo "The sum = $sum"
-
-    # Increment the count
-    echo "The count = $count"
   fi
 done < "$NUMBERS_FILE"
 
 # Calculate the average
 average=$(bc -l <<< "scale=2; $((sum / count))")
 
-echo "The average is: $average"
-echo "The average scale=2 is: $(bc -l <<< "scale=6; $average / 1000000")"
+echo "The average response time is: $(bc -l <<< "scale=6; $average / 1000000")"
