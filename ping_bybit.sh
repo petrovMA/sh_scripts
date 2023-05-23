@@ -22,7 +22,6 @@ do
 done
 }
 
-
 # Specify the file to record the responses
 RESPONSE_FILE="results.txt"
 
@@ -40,29 +39,20 @@ requests "https://api.bybit.com/v5/market/funding/history?category=spot"
 echo "Requests test completed."
 
 
-# Specify the file containing the numbers
 NUMBERS_FILE="results.txt"
 
-# Initialize variables for sum and count
 sum=0
 count=0
 
 # Read the file line by line
 while IFS= read -r number
 do
-  # Check if the line is not empty
   if [[ -n $number ]]; then
     count=$((count + 1))
-    # Replace dot with decimal point
-    number=${number//./,}
-
-    # Add the number to the sum
-    sum=$((sum + number))
+    sum=$(echo "$sum + $number" | bc)
   fi
 done < "$NUMBERS_FILE"
 
-# Calculate the average
-average=$((sum / count))
-echo "Average $average"
+average=$(echo "scale=6; $sum / $count" | bc)
 
-echo "The average response time is: $(bc -l <<< "scale=6; $average / 1000000")"
+echo "The average response time is: $average seconds!"
