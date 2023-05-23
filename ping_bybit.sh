@@ -4,22 +4,31 @@ sudo apt-get install bc
 
 requests()
 {
+  # Specify the number of iterations for the loop
+  ITERATIONS=5
 
-# Specify the number of iterations for the loop
-ITERATIONS=5
-# Loop through the specified number of iterations
-for ((i=1; i<=$ITERATIONS; i++))
-do
-  echo "Making request $1"
+  # Loop through the specified number of iterations
+  for ((i=1; i<=$ITERATIONS; i++))
+  do
+    echo "Making request $1"
 
-  # Make the curl request and save the response
-  response=$(curl -s -w %{time_total}\\n -o /dev/null $1)
+    # Variables to store the response status and response time
+    response_status=""
+    response_time=""
 
-  # Append the response to the file
-  echo "$response" >> "$RESPONSE_FILE"
+    # Make the curl request and save the response
+    response=$(curl -s -o /dev/null -w "%{http_code} %{time_total}" "$1")
 
-  echo "Response time $i recorded."
-done
+    # Split the response into status and time using whitespace as the delimiter
+    read -r response_status response_time <<< "$response"
+
+    echo "Response status: $response_status"
+
+    # Append the response to the file
+    echo "$response_time" >> "$RESPONSE_FILE"
+
+    echo "Response time $i recorded."
+  done
 }
 
 # Specify the file to record the responses
