@@ -1,5 +1,7 @@
 #!/bin/bash
 
+sudo apt-get install bc
+
 requests()
 {
 
@@ -60,6 +62,7 @@ do
 done < "$NUMBERS_FILE"
 
 # Calculate the average
-average=$(bc -l <<< "scale=2; $((sum / count))")
+average=$((sum / count))
+echo "Average $average"
 
 echo "The average response time is: $(bc -l <<< "scale=6; $average / 1000000")"
